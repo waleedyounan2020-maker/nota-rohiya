@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نوتة روحية</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #b8964e; --gold-light: #d4ae6a; --gold-pale: #f5e9c9;
+    --cream: #faf6ec; --dark: #2a1f0e; --dark2: #3d2d12;
+    --brown: #6b4c1e; --border: #c9a55a;
+    --done-check: #388e3c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Amiri', serif; background: var(--cream);
+    color: var(--dark); min-height: 100vh; padding: 20px;
+    background-image:
+      radial-gradient(ellipse at 10% 20%, rgba(184,150,78,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 80%, rgba(184,150,78,0.08) 0%, transparent 50%);
+  }
+  .header { text-align: center; padding: 28px 20px 18px; }
+  .title-cross { font-size: 2rem; color: var(--gold); display: block; margin-bottom: 4px; }
+  .title-main { font-family: 'Scheherazade New', serif; font-size: 2.8rem; font-weight: 700; color: var(--dark2); line-height: 1; }
+  .title-sub { font-size: 1rem; color: var(--gold); margin-top: 6px; font-style: italic; }
+  .title-name { font-family: 'Scheherazade New', serif; font-size: 1.5rem; font-weight: 700; color: var(--brown); margin-top: 8px; }
+  .header-divider { width: 200px; height: 2px; background: linear-gradient(to right, transparent, var(--gold), transparent); margin: 12px auto 0; }
+  .status-bar { text-align: center; margin: 10px 0; font-size: 0.85rem; color: var(--brown); min-height: 20px; }
+  .status-bar.saving { color: #e67e22; }
+  .status-bar.saved { color: var(--done-check); }
+  .status-bar.error { color: #c0392b; }
+  .legend { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin: 8px 0 16px; font-size: 0.82rem; color: var(--brown); }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--gold); }
+  .table-wrap { overflow-x: auto; border-radius: 12px; box-shadow: 0 4px 30px rgba(42,31,14,0.12); border: 1.5px solid var(--border); background: white; }
+  table { width: 100%; border-collapse: collapse; min-width: 620px; }
+  thead tr { background: linear-gradient(135deg, var(--dark2) 0%, var(--brown) 100%); }
+  thead th { padding: 13px 6px; font-family: 'Scheherazade New', serif; font-weight: 700; font-size: 1rem; color: var(--gold-pale); text-align: center; border-left: 1px solid rgba(184,150,78,0.3); }
+  thead th:last-child { border-left: none; }
+  thead th.category-header { font-size: 0.88rem; color: var(--gold-light); }
+  tbody tr { border-bottom: 1px solid rgba(184,150,78,0.2); transition: background 0.2s; }
+  tbody tr:hover { background: rgba(245,233,201,0.4); }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:nth-child(even) td:not(.day-cell) { background: rgba(250,246,236,0.5); }
+  .day-cell { text-align: center; padding: 10px 8px; font-family: 'Scheherazade New', serif; font-weight: 700; font-size: 1.05rem; color: var(--dark2); background: linear-gradient(180deg, var(--gold-pale) 0%, #ede3c4 100%); border-left: 1px solid rgba(184,150,78,0.3); white-space: nowrap; min-width: 60px; }
+  .check-cell { text-align: center; padding: 8px 4px; border-left: 1px solid rgba(184,150,78,0.15); vertical-align: middle; min-width: 68px; }
+  .check-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  .check-label { display: flex; align-items: center; justify-content: center; cursor: pointer; width: 30px; height: 30px; }
+  .check-label input[type="checkbox"] { display: none; }
+  .check-box { width: 26px; height: 26px; border: 2px solid var(--gold); border-radius: 6px; background: white; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; position: relative; }
+  .check-box::after { content: ''; width: 14px; height: 9px; border-left: 2.5px solid white; border-bottom: 2.5px solid white; transform: rotate(-45deg) scale(0) translateY(-2px); transition: transform 0.15s ease; display: block; }
+  .check-label input:checked + .check-box { background: var(--done-check); border-color: var(--done-check); }
+  .check-label input:checked + .check-box::after { transform: rotate(-45deg) scale(1) translateY(-2px); }
+  tr.row-done td { background: rgba(232,245,233,0.5) !important; }
+  .cat-icon { font-size: 1.1rem; display: block; margin-bottom: 2px; }
+  .footer { text-align: center; margin-top: 20px; color: var(--gold); font-size: 0.85rem; font-family: 'Scheherazade New', serif; opacity: 0.7; }
+  .reset-btn { display: block; margin: 16px auto 0; background: transparent; border: 1.5px solid var(--gold); color: var(--brown); font-family: 'Amiri', serif; font-size: 0.9rem; padding: 7px 22px; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
+  .reset-btn:hover { background: var(--gold); color: white; }
+  .loading-overlay { position: fixed; inset: 0; background: rgba(250,246,236,0.92); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; gap: 12px; }
+  .loading-overlay .spinner { width: 40px; height: 40px; border: 3px solid var(--gold-pale); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-overlay p { font-family: 'Scheherazade New', serif; font-size: 1.2rem; color: var(--brown); }
+  @media (max-width: 500px) { .title-main { font-size: 2rem; } .check-box { width: 22px; height: 22px; } }
+</style>
+</head>
+<body>
+
+<div id="loading-overlay" class="loading-overlay">
+  <div class="spinner"></div>
+  <p>جارى التحميل...</p>
+</div>
+
+<div class="header">
+  <span class="title-cross">✞</span>
+  <div class="title-main">نوتة روحية</div>
+  <div class="title-sub">مواعيد الصلاة والقراءات الأسبوعية</div>
+  <div class="title-name" id="display-name">...</div>
+  <div class="header-divider"></div>
+</div>
+
+<div class="status-bar" id="status-bar"></div>
+
+<div class="legend">
+  <span class="legend-item"><span class="legend-dot" style="background:#fff7e0"></span> غير مكتمل</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#388e3c"></span> مكتمل ✓</span>
+</div>
+
+<div class="table-wrap">
+  <table id="agenda">
+    <thead>
+      <tr>
+        <th>اليوم</th>
+        <th class="category-header"><span class="cat-icon">🌅</span>باكر</th>
+        <th class="category-header"><span class="cat-icon">🌇</span>غروب</th>
+        <th class="category-header"><span class="cat-icon">🌙</span>نوم</th>
+        <th class="category-header"><span class="cat-icon">⛪</span>قداس</th>
+        <th class="category-header"><span class="cat-icon">📖</span>كتاب مقدس</th>
+        <th class="category-header"><span class="cat-icon">🙏</span>اعتراف</th>
+      </tr>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+</div>
+
+<button class="reset-btn" onclick="resetAll()">↺ إعادة تعيين الكل</button>
+<div class="footer">† بالصلاة تشرق كل يوم جديد †</div>
+
+<script>
+const SUPABASE_URL = 'https://jjmrxrwdvqdhjldqwtyg.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_4lMPBaPdfmaUQY1NhNqA2w_zBzICu3I';
+
+const days  = ['السبت','الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة'];
+const cats  = ['باكر','غروب','نوم','قداس','كتاب_مقدس','اعتراف'];
+const icons = ['🌅','🌇','🌙','⛪','📖','🙏'];
+
+// Get person name from URL: ?name=viola  or  ?name=فيولا
+const params   = new URLSearchParams(location.search);
+const personId = params.get('id') || 'unknown';
+const personName = decodeURIComponent(params.get('name') || personId);
+
+document.getElementById('display-name').textContent = personName;
+document.title = 'نوتة روحية - ' + personName;
+
+let state = {}; // { "السبت_باكر": true, ... }
+let saveTimer = null;
+
+// ---- Supabase helpers ----
+async function sbFetch(method, body) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/attendance`, {
+    method,
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': method === 'POST' ? 'resolution=merge-duplicates,return=minimal' : 'return=minimal'
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  return res;
+}
+
+async function loadData() {
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/attendance?person_id=eq.${encodeURIComponent(personId)}&select=data`,
+      { headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY } }
+    );
+    const rows = await res.json();
+    if (rows && rows.length > 0 && rows[0].data) {
+      state = rows[0].data;
+    }
+  } catch(e) { console.error(e); }
+}
+
+async function saveData() {
+  setStatus('saving', '💾 جارى الحفظ...');
+  try {
+    await sbFetch('POST', {
+      person_id: personId,
+      person_name: personName,
+      data: state,
+      updated_at: new Date().toISOString()
+    });
+    setStatus('saved', '✅ تم الحفظ');
+    setTimeout(() => setStatus('', ''), 2000);
+  } catch(e) {
+    setStatus('error', '❌ خطأ في الحفظ');
+  }
+}
+
+function setStatus(cls, msg) {
+  const el = document.getElementById('status-bar');
+  el.className = 'status-bar ' + cls;
+  el.textContent = msg;
+}
+
+function scheduleSave() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveData, 800);
+}
+
+// ---- Build Table ----
+function buildTable() {
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+  days.forEach(day => {
+    const tr = document.createElement('tr');
+    tr.id = 'row-' + day;
+    const td0 = document.createElement('td');
+    td0.className = 'day-cell';
+    td0.textContent = day;
+    tr.appendChild(td0);
+    cats.forEach(cat => {
+      const key = day + '_' + cat;
+      const td = document.createElement('td');
+      td.className = 'check-cell';
+      const wrap = document.createElement('div');
+      wrap.className = 'check-wrap';
+      const label = document.createElement('label');
+      label.className = 'check-label';
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.checked = !!state[key];
+      input.addEventListener('change', () => {
+        state[key] = input.checked;
+        updateRow(day);
+        scheduleSave();
+      });
+      const box = document.createElement('span');
+      box.className = 'check-box';
+      label.appendChild(input);
+      label.appendChild(box);
+      wrap.appendChild(label);
+      td.appendChild(wrap);
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+    updateRow(day);
+  });
+}
+
+function updateRow(day) {
+  const allDone = cats.every(cat => !!state[day + '_' + cat]);
+  const row = document.getElementById('row-' + day);
+  if (allDone) row.classList.add('row-done');
+  else row.classList.remove('row-done');
+}
+
+async function resetAll() {
+  if (!confirm('هل تريد إعادة تعيين جميع الحقول؟')) return;
+  state = {};
+  buildTable();
+  await saveData();
+}
+
+// ---- Init ----
+(async () => {
+  await loadData();
+  buildTable();
+  document.getElementById('loading-overlay').style.display = 'none';
+})();
+</script>
+</body>
+</html>
