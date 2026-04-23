@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نوتة روحية — الصفحة الرئيسية</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Scheherazade+New:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #b8964e; --gold-light: #d4ae6a; --gold-pale: #f5e9c9;
+    --cream: #faf6ec; --dark: #2a1f0e; --dark2: #3d2d12;
+    --brown: #6b4c1e; --border: #c9a55a; --done-check: #388e3c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Amiri', serif; background: var(--cream); color: var(--dark); min-height: 100vh; padding: 20px; background-image: radial-gradient(ellipse at 10% 20%, rgba(184,150,78,0.08) 0%, transparent 50%), radial-gradient(ellipse at 90% 80%, rgba(184,150,78,0.08) 0%, transparent 50%); }
+
+  .header { text-align: center; padding: 28px 20px 18px; }
+  .title-cross { font-size: 2rem; color: var(--gold); display: block; margin-bottom: 4px; }
+  .title-main { font-family: 'Scheherazade New', serif; font-size: 2.6rem; font-weight: 700; color: var(--dark2); line-height: 1; }
+  .title-sub { font-size: 1rem; color: var(--gold); margin-top: 6px; font-style: italic; }
+  .header-divider { width: 200px; height: 2px; background: linear-gradient(to right, transparent, var(--gold), transparent); margin: 12px auto 16px; }
+
+  .admin-btn { display: block; width: fit-content; margin: 0 auto 24px; background: var(--dark2); color: var(--gold-light); font-family: 'Scheherazade New', serif; font-size: 1rem; padding: 10px 28px; border-radius: 24px; text-decoration: none; border: 1.5px solid var(--gold); transition: all 0.2s; }
+  .admin-btn:hover { background: var(--gold); color: var(--dark); }
+
+  .search-wrap { max-width: 320px; margin: 0 auto 16px; }
+  .search-wrap input { width: 100%; padding: 9px 16px; background: white; border: 1.5px solid var(--border); border-radius: 24px; color: var(--dark); font-family: 'Amiri', serif; font-size: 1rem; outline: none; text-align: right; box-shadow: 0 2px 8px rgba(184,150,78,0.1); }
+  .search-wrap input:focus { border-color: var(--gold); }
+
+  .grade-section { margin-bottom: 28px; }
+  .grade-title { font-family: 'Scheherazade New', serif; font-size: 1.3rem; font-weight: 700; color: var(--brown); border-bottom: 2px solid var(--gold-pale); padding-bottom: 8px; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .grade-count { font-size: 0.85rem; color: var(--gold); font-weight: 400; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+
+  .person-card { background: white; border: 1.5px solid rgba(184,150,78,0.25); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; text-decoration: none; color: var(--dark); transition: all 0.2s; box-shadow: 0 2px 8px rgba(42,31,14,0.06); }
+  .person-card:hover { border-color: var(--gold); box-shadow: 0 4px 16px rgba(184,150,78,0.2); transform: translateY(-2px); }
+  .card-left { display: flex; align-items: center; gap: 10px; }
+  .card-num { width: 28px; height: 28px; border-radius: 50%; background: var(--gold-pale); color: var(--brown); font-size: 0.8rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .card-name { font-family: 'Scheherazade New', serif; font-size: 0.95rem; font-weight: 600; color: var(--dark2); line-height: 1.3; }
+  .card-arrow { color: var(--gold); font-size: 1.1rem; flex-shrink: 0; }
+
+  .copy-btn { background: transparent; border: 1px solid rgba(184,150,78,0.4); color: var(--brown); font-family: 'Amiri', serif; font-size: 0.75rem; padding: 3px 10px; border-radius: 10px; cursor: pointer; transition: all 0.2s; margin-top: 5px; display: block; width: 100%; text-align: center; }
+  .copy-btn:hover { background: var(--gold-pale); border-color: var(--gold); }
+  .copy-btn.copied { color: var(--done-check); border-color: var(--done-check); }
+
+  .card-inner { flex: 1; }
+
+  .footer { text-align: center; margin-top: 24px; color: var(--gold); font-size: 0.85rem; font-family: 'Scheherazade New', serif; opacity: 0.7; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="title-cross">✞</span>
+  <div class="title-main">نوتة روحية</div>
+  <div class="title-sub">مواعيد الصلاة والقراءات الأسبوعية</div>
+  <div class="header-divider"></div>
+</div>
+
+<a href="admin_dashboard.html" class="admin-btn">👨‍💼 لوحة الأدمن</a>
+
+<div class="search-wrap">
+  <input type="text" id="search" placeholder="🔍 ابحث بالاسم..." oninput="filterCards()">
+</div>
+
+<div id="content"></div>
+
+<div class="footer">† بالصلاة تشرق كل يوم جديد †</div>
+
+<script>
+const persons = [
+  {id:"p001",name:"جومانا سامى حنا سامى",grade:"سنة اولى",num:1},
+  {id:"p002",name:"ساندى سمير حنا سلامة",grade:"سنة اولى",num:2},
+  {id:"p003",name:"ساندى فادى هانى عزمى",grade:"سنة اولى",num:3},
+  {id:"p004",name:"سيلفيا عبد المسيح زكى حليم",grade:"سنة اولى",num:4},
+  {id:"p005",name:"فيرونيا هانى نجيب ميخائيل",grade:"سنة اولى",num:5},
+  {id:"p006",name:"كارين جرجس عصمت عزمى",grade:"سنة اولى",num:6},
+  {id:"p007",name:"كرستينا عاطف ابراهيم منصور",grade:"سنة اولى",num:7},
+  {id:"p008",name:"كريستين مرقس فاروق غبريال",grade:"سنة اولى",num:8},
+  {id:"p009",name:"مارى فوزى جاب الله ابراهيم",grade:"سنة اولى",num:9},
+  {id:"p010",name:"ماريا اشرف سامى ميخائيل",grade:"سنة اولى",num:10},
+  {id:"p011",name:"ماريا عطية سمير ناروز",grade:"سنة اولى",num:11},
+  {id:"p012",name:"ماريز اشرف بدير نجيب",grade:"سنة اولى",num:12},
+  {id:"p013",name:"مريم عونى جميل نجيب",grade:"سنة اولى",num:13},
+  {id:"p014",name:"مادونا سامى عدلى",grade:"سنة اولى",num:14},
+  {id:"p015",name:"ماريا هانى جميل",grade:"سنة اولى",num:15},
+  {id:"p016",name:"مارينا اشرف صابر",grade:"سنة اولى",num:16},
+  {id:"p017",name:"هيلين امير فهمى",grade:"سنة اولى",num:17},
+  {id:"p018",name:"عبير فوكيه",grade:"سنة اولى",num:18},
+  {id:"p019",name:"ابانوب هانى سمير فهمى",grade:"سنة اولى",num:19},
+  {id:"p020",name:"ارساني وليد يونان نسيم",grade:"سنة اولى",num:20},
+  {id:"p021",name:"رويس رومانى سمير ابراهيم",grade:"سنة اولى",num:21},
+  {id:"p022",name:"ريمون هانى الراهب امين",grade:"سنة اولى",num:22},
+  {id:"p023",name:"ماثيو مينا روزفلت شفيق",grade:"سنة اولى",num:23},
+  {id:"p024",name:"يوسف ماجد طلعت موسى",grade:"سنة اولى",num:24},
+  {id:"p025",name:"هانى فريد هانى",grade:"سنة اولى",num:25},
+  {id:"p026",name:"مهرائيل هانى فوزى",grade:"سنة ثانية",num:26},
+  {id:"p027",name:"شيرى سامح جرجس ايوب",grade:"سنة ثانية",num:27},
+  {id:"p028",name:"مارى جورج صفوت تادرس",grade:"سنة ثانية",num:28},
+  {id:"p029",name:"ماريان وجيه يوسف",grade:"سنة ثانية",num:29},
+  {id:"p030",name:"ثيؤدورا أيمن جندى رياض",grade:"سنة ثانية",num:30},
+  {id:"p031",name:"ميرا بطرس فؤاد بطرس",grade:"سنة ثانية",num:31},
+  {id:"p032",name:"جاسمين جورج حنا تادرس",grade:"سنة ثانية",num:32},
+  {id:"p033",name:"ساندرا مفدى حبيب بشوى",grade:"سنة ثانية",num:33},
+  {id:"p034",name:"ماريام عونى سمير ابراهيم",grade:"سنة ثانية",num:34},
+  {id:"p035",name:"فرحة عماد فهمى",grade:"سنة ثانية",num:35},
+  {id:"p036",name:"مهرائيل ماجد عاطف",grade:"سنة ثانية",num:36},
+  {id:"p037",name:"مهرائيل يوسف",grade:"سنة ثانية",num:37},
+  {id:"p038",name:"جوزيف شنودة فرج يوسف",grade:"سنة ثانية",num:38},
+  {id:"p039",name:"يوساب امير ميشيل رياض",grade:"سنة ثانية",num:39},
+  {id:"p040",name:"كيرلس مجدى لطيف عبد الملاك",grade:"سنة ثانية",num:40},
+];
+
+function getLink(p) {
+  return `nota_user.html?id=${p.id}&name=${encodeURIComponent(p.name)}`;
+}
+
+function copyLink(id, name, btn) {
+  const base = location.href.replace('index.html','').replace(/\/$/, '');
+  const url = `${base}/nota_user.html?id=${id}&name=${encodeURIComponent(name)}`;
+  navigator.clipboard.writeText(url).then(() => {
+    btn.textContent = '✅ تم النسخ!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '🔗 نسخ اللينك'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function buildContent(list) {
+  const grades = [...new Set(list.map(p => p.grade))];
+  const content = document.getElementById('content');
+  content.innerHTML = '';
+  grades.forEach(grade => {
+    const filtered = list.filter(p => p.grade === grade);
+    if (filtered.length === 0) return;
+    const sec = document.createElement('div');
+    sec.className = 'grade-section';
+    sec.innerHTML = `<div class="grade-title">✞ ${grade} <span class="grade-count">(${filtered.length} شخص)</span></div>`;
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    filtered.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'person-card-wrap';
+      card.dataset.name = p.name;
+      card.innerHTML = `
+        <a href="${getLink(p)}" class="person-card" target="_blank">
+          <div class="card-left">
+            <div class="card-num">${p.num}</div>
+            <div class="card-inner">
+              <div class="card-name">${p.name}</div>
+              <button class="copy-btn" onclick="event.preventDefault();event.stopPropagation();copyLink('${p.id}','${p.name}',this)">🔗 نسخ اللينك</button>
+            </div>
+          </div>
+          <span class="card-arrow">←</span>
+        </a>`;
+      grid.appendChild(card);
+    });
+    sec.appendChild(grid);
+    content.appendChild(sec);
+  });
+}
+
+function filterCards() {
+  const q = document.getElementById('search').value.trim();
+  const filtered = q ? persons.filter(p => p.name.includes(q)) : persons;
+  buildContent(filtered);
+}
+
+buildContent(persons);
+</script>
+</body>
+</html>
